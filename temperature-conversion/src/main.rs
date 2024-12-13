@@ -1,64 +1,81 @@
 use std::io;
 
 fn main() {
-    println!("Let's convert some temperatures!");
+    println!("Let's convert some temperatures! Do you want to convert to Celsius or Fahrenheit?");
 
-    'temp_scale: loop {
-        println!("Do you want to convert to Celsius or Fahrenheit? Please enter the letter F or C for the scale you want to convert to.");
-        let mut temp_scale = String::new();
+    loop {
+        let temp_scale = get_target_scale();
+        let temperature = get_temperature();
+        let conversion = convert_temperature(temperature, &temp_scale);
 
-        io::stdin().read_line(&mut temp_scale).expect("error");
+        match temp_scale {
+            TemperatureScale::Celcius => {
+                println!("{temperature}° Fahrenheit converts to {conversion:.2}° Celsius.")
+            }
+            TemperatureScale::Fahrenheit => {
+                println!("{temperature}° Celsius converts to {conversion:.2}° Fahrenheit.")
+            }
+        }
 
-        let temp_scale: char = match temp_scale.trim().to_uppercase().as_str() {
-            "F" => 'F',
-            "C" => 'C',
-            _ => continue 'temp_scale,
-        };
+        if convert_again() {
+            continue;
+        } else {
+            break println!("Have a breezy day!");
+        }
+    }
 
-        'get_temp: loop {
+    enum TemperatureScale {
+        Fahrenheit,
+        Celcius,
+    }
+
+    fn get_target_scale() -> TemperatureScale {
+        loop {
+            println!("Please enter the letter F or C for the scale you want to convert to.");
+            let mut temp_scale = String::new();
+            io::stdin().read_line(&mut temp_scale).expect("error");
+
+            match temp_scale.trim().to_uppercase().as_str() {
+                "F" => break TemperatureScale::Fahrenheit,
+                "C" => break TemperatureScale::Celcius,
+                _ => continue,
+            };
+        }
+    }
+
+    fn get_temperature() -> f64 {
+        loop {
             println!("Please enter a temperature:");
             let mut temperature: String = String::new();
             io::stdin().read_line(&mut temperature).expect("error");
-            let temperature: f64 = if let Ok(num) = temperature.trim().parse() {
-                num
-            } else {
-                continue 'get_temp;
-            };
 
-            let conversion = match temp_scale {
-                'C' => ((temperature - 32.0) * 5.0) / 9.0,
-                'F' => (temperature * 1.8) + 32.0,
-                _ => panic!("what in the hell bobby!"),
+            match temperature.trim().parse() {
+                Ok(num) => break num,
+                Err(_) => continue,
             };
-
-            match temp_scale {
-                'C' => println!(
-                    "{}° Fahrenheit converts to {:.2}° Celsius.",
-                    temperature, conversion
-                ),
-                'F' => println!(
-                    "{}° Celsius converts to {:.2}° Fahrenheit.",
-                    temperature, conversion
-                ),
-                _ => panic!("what in the hell bobby!"),
-            };
-            break;
         }
-        println!("Would you like to convert another temperature? Y or N");
+    }
+    fn convert_temperature(temp: f64, scale: &TemperatureScale) -> f64 {
+        match scale {
+            TemperatureScale::Celcius => ((temp - 32.0) * 5.0) / 9.0,
+            TemperatureScale::Fahrenheit => (temp * 1.8) + 32.0,
+        }
+    }
 
-        'keep_playing: loop {
+    fn convert_again() -> bool {
+        println!("Would you like to convert another temperature? Y or N");
+        loop {
             let mut choice: String = String::new();
             io::stdin().read_line(&mut choice).expect("error");
 
             match choice.trim().to_uppercase().as_str() {
-                "Y" => break 'keep_playing,
-                "N" => break 'temp_scale,
+                "Y" => break true,
+                "N" => break false,
                 _ => {
                     println!("Please enter Y or N.");
-                    continue 'keep_playing;
+                    continue;
                 }
             }
         }
     }
-    println!("Have a breezy day!");
 }
