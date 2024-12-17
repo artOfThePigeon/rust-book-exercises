@@ -1,21 +1,17 @@
+#![warn(clippy::all, clippy::pedantic)]
 use std::io;
 
 fn main() {
     loop {
         println!("How many iterations of the fibonacci sequence do you want to calculate?");
-        let iterations = get_iterations();
-        println!(
-            "The first {} iterations of the fibonacci sequence are:",
-            iterations
-        );
-
-        fibonacci(iterations);
+        let n: u32 = get_iterations();
+        println!("The first {n} iterations of the fibonacci sequence are:");
+        fibonacci(n);
 
         if play_again() {
             continue;
-        } else {
-            break println!("Have a binacci day!");
         }
+        break println!("Have a binacci day!");
     }
 }
 
@@ -27,24 +23,28 @@ fn get_iterations() -> u32 {
             .read_line(&mut input)
             .expect("something went wrong.");
 
-        let input: u32 = match input.trim().parse() {
-            Ok(num) => num,
-            Err(_) => {
-                println!("Please enter a non-negative integer.");
-                continue;
-            }
+        let input: u32 = if let Ok(num) = input.trim().parse() {
+            num
+        } else {
+            println!("Please enter a non-negative integer.");
+            continue;
         };
         break input;
     }
 }
 
 fn fibonacci(n: u32) {
-    let mut fib: u32 = 1;
-    let mut fib_previous: u32 = 0;
-    for _ in 1..=n {
+    let mut fib: u128 = 1;
+    let mut fib_previous: u128 = 0;
+    for i in 1..=n {
         println!("{fib}");
-        fib += fib_previous;
-        fib_previous = fib - fib_previous;
+        if let Some(next_fib) = fib.checked_add(fib_previous) {
+            fib = next_fib;
+            fib_previous = fib - fib_previous;
+        } else {
+            println!("Overflow occurred at iteration {i}. This is as large as it goes!");
+            return;
+        }
     }
 }
 
