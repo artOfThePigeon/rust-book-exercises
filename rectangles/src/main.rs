@@ -1,4 +1,6 @@
 #[derive(Debug)]
+
+//practice with creating structs, methods, and associated functions
 struct Rectangle {
     width: u32,
     height: u32,
@@ -8,6 +10,21 @@ impl Rectangle {
     fn area(&self) -> u32 {
         self.width * self.height
     }
+    fn width(&self) -> bool {
+        self.width > 0
+    }
+    fn can_hold(&self, other: &Rectangle) -> bool {
+        self.width > other.width && self.height > other.height
+    }
+}
+// multiple impl blocks for the same struct is valid syntax
+impl Rectangle {
+    fn square(side: u32) -> Self {
+        Self {
+            width: side,
+            height: side,
+        }
+    }
 }
 
 fn main() {
@@ -16,7 +33,27 @@ fn main() {
         height: 50,
     };
 
+    let rect1 = Rectangle {
+        width: 10,
+        height: 40,
+    };
+
+    let rect2 = Rectangle {
+        width: 60,
+        height: 45,
+    };
+
+    // associated functions do not take &self as the parameter, but return an instance of the struct
+    let my_square = Rectangle::square(50);
+
+    // practice with calling methods
+    println!("can my_rect hold rect1? {}", my_rect.can_hold(&rect1));
+    println!("can my_rect hold rect2? {}", my_rect.can_hold(&rect2));
     println!("the area of the pixels is {}.", my_rect.area());
+    if my_rect.width() {
+        println!("the rectangle has a width, and it is {}", my_rect.width);
+    }
+    println!("my square is a {my_square:#?}");
 }
 
 /*
