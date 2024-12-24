@@ -1,6 +1,8 @@
 [package]
-name = "dice-game"
+name = "coin-game"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+strum_macros = "0.26.4"
+strum = "0.26.3"
