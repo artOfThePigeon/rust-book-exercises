@@ -64,8 +64,19 @@ enum Coin {
     Quarter(UsState),
 }
 
+impl Coin {
+    fn find_value(&self) -> u32 {
+        match &self {
+            Coin::Penny => 1,
+            Coin::Nickel =>  5,
+            Coin::Dime => 10,
+            Coin::Quarter(_UsState) => 25,
+        }
+    }
+}
+
 fn main() {
-    let mut count = 0;  // Keep track of total coins
+    let mut tup: (u32, u32) = (0, 0);  // Just keep the tuple
     println!("Please insert a coin (Penny, Nickel, Dime, Quarter):");
     loop {
         let mut entry = String::new();
@@ -97,18 +108,17 @@ fn main() {
             }
         };
 
-        count = count_coins(coin, count);
-        println!("Total coins: {}", count);
-        println!("Please enter another coin or enter Q to quit.")
+        tup = count_coins(coin, tup);  // Just pass the tuple
+        println!("Total coins: {}, Total value: ${:.2}", tup.0, (tup.1 as f64) / 100.0);  // Format cents as dollars
+        println!("Please enter another coin or enter Q to quit.");
     }
 }
 
-fn count_coins(coin: Coin, mut count: u32) -> u32 {
-    if let Coin::Quarter(state) = coin {
+fn count_coins(coin: Coin, mut tup: (u32, u32)) -> (u32, u32) {
+    if let Coin::Quarter(state) = &coin {
         println!("State quarter from {:?}!", state);
-        count += 1;
-    } else {
-        count += 1;
     }
-    count
+    tup.1 += coin.find_value();  // Add value to tup.1
+    tup.0 += 1;                  // Increment count in tup.0
+    tup
 }
