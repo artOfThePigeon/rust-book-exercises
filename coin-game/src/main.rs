@@ -75,8 +75,16 @@ impl Coin {
     }
 }
 
+struct CoinCollection {
+    count: u32,
+    value: u32,
+}
+
 fn main() {
-    let mut tup: (u32, u32) = (0, 0);  // Just keep the tuple
+    let mut collection = CoinCollection {
+        count: 0,
+        value: 0,
+    };
     println!("Please insert a coin (Penny, Nickel, Dime, Quarter):");
     loop {
         let mut entry = String::new();
@@ -108,17 +116,17 @@ fn main() {
             }
         };
 
-        tup = count_coins(coin, tup);  // Just pass the tuple
-        println!("Total coins: {}, Total value: ${:.2}", tup.0, (tup.1 as f64) / 100.0);  // Format cents as dollars
+        collection = count_coins(coin, collection);
+        println!("Total coins: {}, Total value: ${:.2}", collection.count, (collection.value as f64) / 100.0);  // Format cents as dollars
         println!("Please enter another coin or enter Q to quit.");
     }
 }
 
-fn count_coins(coin: Coin, mut tup: (u32, u32)) -> (u32, u32) {
+fn count_coins(coin: Coin, mut collection: CoinCollection) -> CoinCollection {
     if let Coin::Quarter(state) = &coin {
         println!("State quarter from {:?}!", state);
     }
-    tup.1 += coin.find_value();  // Add value to tup.1
-    tup.0 += 1;                  // Increment count in tup.0
-    tup
+    collection.value += coin.find_value();
+    collection.count += 1;
+    collection
 }
