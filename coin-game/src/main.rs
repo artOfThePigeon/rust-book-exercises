@@ -78,6 +78,10 @@ impl Coin {
 struct CoinCollection {
     count: u32,
     value: u32,
+    penny_count: u32,    // New
+    nickel_count: u32,   // New
+    dime_count: u32,     // New
+    quarter_count: u32,  // New
 }
 
 fn main() {
